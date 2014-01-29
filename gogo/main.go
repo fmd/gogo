@@ -1,27 +1,11 @@
 package main
 
-import (
-    "net/url"
-    "github.com/fmd/gogo/sleepy"
-)
-
-type HelloResource struct {
-    sleepy.PostNotSupported
-    sleepy.PutNotSupported
-    sleepy.DeleteNotSupported
-}
-
-func (HelloResource) Get(values url.Values) (int, interface{}) {
-    data := map[string]string{"hello": "world"}
-    return 200, data
-}
+import "github.com/codegangsta/martini"
 
 func main() {
-
-    helloResource := new(HelloResource)
-
-    var api = new(sleepy.API)
-    api.AddResource(helloResource, "/hello")
-    api.Start(3000)
-
+      m := martini.Classic()
+        m.Get("/", func() string {
+                return "Hello world!"
+                  })
+          m.Run()
 }
