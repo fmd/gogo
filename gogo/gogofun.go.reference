@@ -1,0 +1,148 @@
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+	"os"
+	"strconv"
+	"strings"
+)
+
+type Board []string
+type Group [][2]int
+
+func GetGroup(char string, board Board, x int, y int, group Group, printit bool, libs bool) (Group, bool) {
+	if printit {
+		fmt.Println(group)
+	}
+	switch x < 0 || x == len(board) || y < 0 || y == len(board) {
+	case true:
+		return group, libs
+	}
+	ch := board[x][y : y+1]
+	if ch == "0" {
+		return group, libs
+	}
+	board[x] = board[x][0:y] + "0" + board[x][y+1:]
+	switch ch {
+	case char:
+		group = append(group, [2]int{x, y})
+	case ".":
+		return group, true
+	default:
+		return group, libs
+	}
+
+	ret, lib := GetGroup(char, board, x+1, y, group, printit, libs)
+	ret, lib = GetGroup(char, board, x, y+1, ret, printit, lib)
+	ret, lib = GetGroup(char, board, x-1, y, ret, printit, lib)
+	ret, lib = GetGroup(char, board, x, y-1, ret, printit, lib)
+	return ret, lib
+}
+func GetGroups(board Board, x int, y int, groups []Group) []Group {
+	switch len(board) {
+	case x:
+		return groups
+	case y:
+		return GetGroups(board, x+1, 0, groups)
+	}
+	if board[x][y:y+1] != "." {
+		tmp := make(Board, len(board))
+		copy(tmp, board)
+		gr := make(Group, 0)
+		printit := false
+		if x == 0 && y == 2 {
+			fmt.Println(board[x][y : y+1])
+			printit = true
+		}
+		group, libs := GetGroup(board[x][y:y+1], tmp, x, y, gr, printit, false)
+
+		if !libs {
+			groups = append(groups, group)
+		}
+	}
+
+	return GetGroups(board, x, y+1, groups)
+}
+func RemoveGroup(board Board, group Group) Board {
+	switch len(group) {
+	case 0:
+		return board
+	}
+	tile, group := group[0], group[1:]
+	fmt.Println(tile)
+	board[tile[0]] = board[tile[0]][0:tile[1]] + "." + board[tile[0]][tile[1]+1:]
+	return RemoveGroup(board, group)
+}
+func RemoveGroups(board Board, groups []Group) Board {
+	switch len(groups) {
+	case 0:
+		return board
+	}
+
+	group, groups := groups[0], groups[1:]
+
+	board = RemoveGroup(board, group)
+	return RemoveGroups(board, groups)
+}
+func ParseBoard(board Board) Board {
+	groups := GetGroups(board, 0, 0, make([]Group, 0))
+	fmt.Println(groups)
+	return RemoveGroups(board, groups)
+
+}
+func PrintBoards(boards []Board, boardfile string) string {
+	switch len(boards) {
+	case 0:
+		return boardfile
+	default:
+		return PrintBoards(boards[1:], boardfile+"\n"+strings.Join(boards[0], "\n")+"\n")
+	}
+}
+func GetBoard(boards []Board, boardfile string) []Board {
+	splitBoard := strings.SplitN(boardfile, "\n", 2)
+	switch len(splitBoard[0]) {
+	case 0:
+		return GetBoard(append(boards, make(Board, 0)), splitBoard[1])
+	}
+	boards[len(boards)-1] = append(boards[len(boards)-1], splitBoard[0])
+	switch len(splitBoard[1]) {
+	case 0:
+		return boards
+	default:
+		return GetBoard(boards, splitBoard[1])
+	}
+}
+func ApplyMove(boards []Board, x int, y int) []Board {
+	newBoard := boards[len(boards)-1]
+	var piece string
+	switch len(boards) % 2 {
+	case 1:
+		piece = "X"
+	default:
+		piece = "O"
+	}
+	current := newBoard[x][y-1 : y]
+	if current != "." {
+		fmt.Println("Invalid Move.")
+		fmt.Println(strings.Join(newBoard, "\n") + "\n")
+		os.Exit(0)
+	}
+
+	newBoard[x] = newBoard[x][0:y-1] + piece + newBoard[x][y:]
+	newBoard = ParseBoard(newBoard)
+	fmt.Println(strings.Join(newBoard, "\n") + "\n")
+	return append(boards, newBoard)
+}
+func Game(boardfile []byte, inputX int, inputY int) string {
+	return PrintBoards(ApplyMove(GetBoard(make([]Board, 0), string(boardfile)), inputX-1, inputY+1), "")
+}
+func main() {
+	boardfile, err := ioutil.ReadFile(os.Args[1])
+	inputY := int([]byte(os.Args[2])[0] - 65)
+	inputX, err := strconv.Atoi(string([]byte(os.Args[2])[1:]))
+	if err != nil {
+		return
+	}
+	ioutil.WriteFile(os.Args[1], []byte(Game(boardfile, inputX, inputY)), 777)
+}
