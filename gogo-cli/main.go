@@ -1,14 +1,11 @@
 package main
 
 import (
-	"github.com/codegangsta/martini"
-	"github.com/fmd/gogo/gogo"
+    "fmt"
 )
 
 func main() {
-	m := martini.Classic()
-	m.Get("/", func() string {
-		return gogo.Board()
-	})
-	m.Run()
+    c := Client{}
+    c.ParseFlags()
+    fmt.Println("OK")
 }
