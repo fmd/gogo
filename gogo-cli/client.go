@@ -9,6 +9,7 @@ import (
 
 type Client struct {
     Protocol protocols.IOProtocol
+    Verbose bool
 }
 
 func (c *Client) parseProtocol(name string) {
@@ -18,11 +19,14 @@ func (c *Client) parseProtocol(name string) {
     }
 
     c.Protocol = p
-    fmt.Println(fmt.Sprintf("Using protocol: %s",c.Protocol.Flag()))
+    fmt.Println(fmt.Sprintf("Using protocol: '%s'.",c.Protocol.Flag()))
 }
 
 func (c *Client) parseVerbose(verbose bool) {
-
+    c.Verbose = verbose
+    if verbose {
+        fmt.Println("Using verbose mode.")
+    }
 }
 
 func (c *Client) Init() {
