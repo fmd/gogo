@@ -14,7 +14,11 @@ type Server struct {
 	Verbose bool
 }
 
-func (s *Server) ParseProtocol() *string {
+// -------------------------- 
+// --- Internal functions --- 
+// -------------------------- 
+
+func (s *Server) parseProtocolFlag() *string {
 	//Get protocols for use in the help text and default protocol
 	pdFlag := protocols.GetProtocolFlags()[0]
 	pFlags := strings.Join(protocols.GetProtocolFlags(), "', '")
@@ -23,7 +27,7 @@ func (s *Server) ParseProtocol() *string {
 	return flag.String("p", pdFlag, pMsg)
 }
 
-func (s *Server) ParseBackend() *string {
+func (s *Server) parseBackendFlag() *string {
 	//Get backends for use in the help text and default backend
 	bdFlag := backends.GetBackendFlags()[0]
 	bFlags := strings.Join(backends.GetBackendFlags(), "', '")
@@ -32,16 +36,20 @@ func (s *Server) ParseBackend() *string {
 	return flag.String("s", bdFlag, bMsg)
 }
 
-func (s *Server) parseVerbose() *bool {
+func (s *Server) parseVerboseFlag() *bool {
 	return flag.Bool("v", false, "Verbose mode")
 }
+
+// ---------------------------- 
+// --- Accessible functions --- 
+// ---------------------------- 
 
 func (s *Server) Init() error {
 
 	//Parse the flags
-	proto := s.ParseProtocol()
-	backend := s.ParseBackend()
-	s.Verbose = *s.parseVerbose()
+	proto := s.parseProtocolFlag()
+	backend := s.parseBackendFlag()
+	s.Verbose = *s.parseVerboseFlag()
 	flag.Parse()
 
 	//Use our proto and backend variables to load the engine.

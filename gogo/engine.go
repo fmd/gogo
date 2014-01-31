@@ -12,34 +12,16 @@ import (
 type Engine struct {
 	Backend  backends.Backend
 	Protocol protocols.IOProtocol
+	ApiHandler handlers.ApiHandler
+	SiteHandler handlers.SiteHandler
 }
 
-// --------------------------------
+// --------------------------
+// --- Internal functions ---
+// --------------------------
+
 // --- Initialisation functions ---
-// --------------------------------
-func NewEngine(p string, b string) (*Engine, error) {
-	var err error = nil
-
-	//Create the object
-	e := &Engine{}
-
-	//Set the protocol
-	err = e.UseProtocol(p)
-	if err != nil {
-		return nil, err
-	}
-
-	//Set the backend
-	err = e.UseBackend(b)
-	if err != nil {
-		return nil, err
-	}
-
-	//Return the object
-	return e, nil
-}
-
-func (e *Engine) UseProtocol(name string) error {
+func (e *Engine) useProtocol(name string) error {
 	p, err := protocols.GetProtocol(name)
 	if err != nil {
 		return err
@@ -50,7 +32,7 @@ func (e *Engine) UseProtocol(name string) error {
 	return nil
 }
 
-func (e *Engine) UseBackend(name string) error {
+func (e *Engine) useBackend(name string) error {
 	b, err := backends.GetBackend(name)
 	if err != nil {
 		return err
@@ -61,28 +43,48 @@ func (e *Engine) UseBackend(name string) error {
 	return nil
 }
 
-
-// -------------------------
 // --- Routing functions ---
-// -------------------------
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Content-Type", "text/html")
-    fmt.Fprint(w, "Try a <a href='/Hello/world'>hello</a>.")
+func siteHandler(w http.ResponseWriter, r *http.Request) {
+	//Pass request to the siteHandler. Generally we'll be returning static files.
 }
 
-func GameHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Game handled.")
+func apiHandler(w http.ResponseWriter, r *http.Request) {
+	//1. Decode request POST/GET data using e.Protocol to raw.
+	//2. Pass request to ApiHandler with the backend to apply the changes to. Get raw response.
+	//3. Encode response data using e.Protocol.
 }
 
-func PlayerHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Player Handled.")
+// ----------------------------
+// --- Accessible functions ---
+// ----------------------------
+
+func NewEngine(p string, b string) (*Engine, error) {
+	var err error = nil
+
+	//Create the object
+	e := &Engine{}
+
+	//Set the protocol
+	err = e.useProtocol(p)
+	if err != nil {
+		return nil, err
+	}
+
+	//Set the backend
+	err = e.useBackend(b)
+	if err != nil {
+		return nil, err
+	}
+
+	//Return the object
+	return e, nil
 }
 
 func (e *Engine) Run() {
 	r := mux.NewRouter()
-    r.HandleFunc("/", HomeHandler)
-    r.HandleFunc("/game", GameHandler)
-    r.HandleFunc("/player", PlayerHandler)
+    r.HandleFunc("/", siteHandler)
+    r.HandleFunc("/game", siteHandler)
+    r.HandleFunc("/api", apiHandler)
     http.Handle("/", r)
 
     log.Fatal(http.ListenAndServe(":3000", nil))
