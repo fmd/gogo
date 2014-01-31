@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/codegangsta/martini"
-	"github.com/fmd/gogo/gogo"
+    "fmt"
 )
 
 func main() {
-	m := martini.Classic()
-	m.Get("/", func() string {
-		return gogo.Board()
-	})
-	m.Run()
+    s := Server{}
+    err := s.Init()
+    if err != nil {
+        panic(err)
+    }
+    s.ServeForever()
 }

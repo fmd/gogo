@@ -6,10 +6,7 @@ import (
 
 func main() {
 	c := Client{}
-	err := c.Init()
-	if err != nil {
-		panic(err)
-	}
+	c.Init()
 
 	fmt.Println("OK")
 }
