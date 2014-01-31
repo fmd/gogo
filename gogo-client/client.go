@@ -1,10 +1,11 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"github.com/fmd/gogo/gogo/protocols"
+	"flag"
 	"strings"
+	curl "github.com/andelf/go-curl"
+	"github.com/fmd/gogo/gogo/protocols"
 )
 
 var (
@@ -12,11 +13,6 @@ var (
 )
 
 type Client struct{}
-
-func (c *Client) Init() {
-	//Parse the flags
-	c.ParseFlags()
-}
 
 func (c *Client) ParseFlags() {
 
@@ -28,4 +24,29 @@ func (c *Client) ParseFlags() {
 	//Create and parse the flags
 	proto = flag.String("p", pdFlag, pMsg)
 	flag.Parse()
+}
+
+func (c *Client) Init() {
+	//Parse the flags
+	c.ParseFlags()
+}
+
+func (c *Client) Run() {
+    easy := curl.EasyInit()
+    defer easy.Cleanup()
+
+    easy.Setopt(curl.OPT_URL, "localhost:3000")
+
+    // make a callback function
+    fooTest := func (buf []byte, userdata interface{}) bool {
+        println("DEBUG: size=>", len(buf))
+        println("DEBUG: content=>", string(buf))
+        return true
+    }
+
+    easy.Setopt(curl.OPT_WRITEFUNCTION, fooTest)
+
+    if err := easy.Perform(); err != nil {
+        fmt.Printf("ERROR: %v\n", err)
+    }
 }

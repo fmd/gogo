@@ -1,35 +1,18 @@
 package main
 
 import (
-	"flag"
 	"fmt"
+	"flag"
+	"strings"
 	"github.com/fmd/gogo/gogo"
+	"github.com/codegangsta/martini"
 	"github.com/fmd/gogo/gogo/backends"
 	"github.com/fmd/gogo/gogo/protocols"
-	"strings"
 )
 
 type Server struct {
 	Engine  *gogo.Engine
 	Verbose bool
-}
-
-func (s *Server) Init() error {
-
-	//Parse the flags
-	proto := s.ParseProtocol()
-	backend := s.ParseBackend()
-	s.Verbose = *s.parseVerbose()
-	flag.Parse()
-
-	//Use our proto and backend variables to load the engine.
-	var err error
-	s.Engine, err = gogo.NewEngine(*proto, *backend)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (s *Server) ParseProtocol() *string {
@@ -52,4 +35,30 @@ func (s *Server) ParseBackend() *string {
 
 func (s *Server) parseVerbose() *bool {
 	return flag.Bool("v", false, "Verbose mode")
+}
+
+func (s *Server) Init() error {
+
+	//Parse the flags
+	proto := s.ParseProtocol()
+	backend := s.ParseBackend()
+	s.Verbose = *s.parseVerbose()
+	flag.Parse()
+
+	//Use our proto and backend variables to load the engine.
+	var err error
+	s.Engine, err = gogo.NewEngine(*proto, *backend)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Server) ServeForever() {
+  m := martini.Classic()
+  m.Get("/", func() string {
+    return "Hello world!"
+  })
+  m.Run()
 }
