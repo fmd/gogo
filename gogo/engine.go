@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"github.com/gorilla/mux"
+	"github.com/fmd/gogo/gogo/handlers"
 	"github.com/fmd/gogo/gogo/backends"
 	"github.com/fmd/gogo/gogo/protocols"
 )
@@ -12,8 +13,8 @@ import (
 type Engine struct {
 	Backend  backends.Backend
 	Protocol protocols.IOProtocol
-	ApiHandler handlers.ApiHandler
-	SiteHandler handlers.SiteHandler
+	ApiHandler *handlers.ApiHandler
+	SiteHandler *handlers.SiteHandler
 }
 
 // --------------------------
@@ -44,13 +45,15 @@ func (e *Engine) useBackend(name string) error {
 }
 
 // --- Routing functions ---
-func siteHandler(w http.ResponseWriter, r *http.Request) {
+func (e *Engine) siteHandler(w http.ResponseWriter, r *http.Request) {
+	e.SiteHandler.Route(w, r)
 	//Pass request to the siteHandler. Generally we'll be returning static files.
 }
 
-func apiHandler(w http.ResponseWriter, r *http.Request) {
+func (e *Engine) apiHandler(w http.ResponseWriter, r *http.Request) {
+	e.ApiHandler.Route(w, r)
 	//1. Decode request POST/GET data using e.Protocol to raw.
-	//2. Pass request to ApiHandler with the backend to apply the changes to. Get raw response.
+	//2. Pass request to ApiHandler.
 	//3. Encode response data using e.Protocol.
 }
 
@@ -58,6 +61,7 @@ func apiHandler(w http.ResponseWriter, r *http.Request) {
 // --- Accessible functions ---
 // ----------------------------
 
+// --- Initialisation functions ---
 func NewEngine(p string, b string) (*Engine, error) {
 	var err error = nil
 
@@ -76,15 +80,20 @@ func NewEngine(p string, b string) (*Engine, error) {
 		return nil, err
 	}
 
+	//Create the SiteHandler
+	e.SiteHandler = handlers.NewSiteHandler()
+	e.ApiHandler = handlers.NewApiHandler(e.Backend)
+
 	//Return the object
 	return e, nil
 }
 
+// --- Serving functions ---
 func (e *Engine) Run() {
 	r := mux.NewRouter()
-    r.HandleFunc("/", siteHandler)
-    r.HandleFunc("/game", siteHandler)
-    r.HandleFunc("/api", apiHandler)
+    r.HandleFunc("/", e.siteHandler)
+    r.HandleFunc("/game", e.siteHandler)
+    r.HandleFunc("/api", e.apiHandler)
     http.Handle("/", r)
 
     log.Fatal(http.ListenAndServe(":3000", nil))
