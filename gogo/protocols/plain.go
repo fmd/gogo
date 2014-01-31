@@ -1,15 +1,15 @@
 package protocols
 
-type Plain struct {}
+type Plain struct{}
 
 func NewPlain() IOProtocol {
-    //Create the object
-    p := &Plain{}
+	//Create the object
+	p := &Plain{}
 
-    //Return the object
-    return IOProtocol(p)
+	//Return the object
+	return IOProtocol(p)
 }
 
 func (p *Plain) Flag() string {
-    return "plain"
+	return "plain"
 }

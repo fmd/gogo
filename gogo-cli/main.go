@@ -1,11 +1,11 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 func main() {
-    c := Client{}
-    c.Init()
-    fmt.Println("OK")
+	c := Client{}
+	c.Init()
+	fmt.Println("OK")
 }

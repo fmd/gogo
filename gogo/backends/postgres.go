@@ -1,15 +1,15 @@
 package backends
 
-type Postgres struct {}
+type Postgres struct{}
 
 func NewPostgres() Backend {
-    //Create the object
-    p := &Postgres{}
+	//Create the object
+	p := &Postgres{}
 
-    //Return the object
-    return Backend(p)
+	//Return the object
+	return Backend(p)
 }
 
 func (p *Postgres) Flag() string {
-    return "postgres"
+	return "postgres"
 }
