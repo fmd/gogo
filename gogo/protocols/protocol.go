@@ -6,7 +6,7 @@ import (
 )
 
 var (
-    //To add a new protocol, implement IOProtocolFlag and add its New() to this slice.
+    //To add a new protocol, implement IOProtocolFlag and add its New() to this slice
     Protocols = []IOProtocol{ NewPlain(), NewGtp1() }
 )
 
