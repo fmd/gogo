@@ -3,35 +3,21 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/fmd/gogo/gogo"
 	"github.com/fmd/gogo/gogo/backends"
 	"github.com/fmd/gogo/gogo/protocols"
 	"strings"
 )
 
+var (
+	proto *string
+	backend *string
+	verbose *bool
+)
+
 type Client struct {
-	Backend  backends.Backend
-	Protocol protocols.IOProtocol
-	Verbose  bool
-}
-
-func (c *Client) parseProtocol(name string) {
-	p, err := protocols.GetProtocol(name)
-	if err != nil {
-		panic(err)
-	}
-
-	c.Protocol = p
-	fmt.Println(fmt.Sprintf("Using protocol '%s'.", c.Protocol.Flag()))
-}
-
-func (c *Client) parseBackend(name string) {
-	b, err := backends.GetBackend(name)
-	if err != nil {
-		panic(err)
-	}
-
-	c.Backend = b
-	fmt.Println(fmt.Sprintf("Using storage format '%s'.", c.Backend.Flag()))
+	Engine *gogo.Engine
+	Verbose bool
 }
 
 func (c *Client) parseVerbose(verbose bool) {
@@ -41,8 +27,20 @@ func (c *Client) parseVerbose(verbose bool) {
 	}
 }
 
-func (c *Client) Init() {
+func (c *Client) Init() error {
+	
+	//Parse the flags to get the engine setup
 	c.ParseFlags()
+	c.parseVerbose(*verbose)
+
+	//Use our proto and backend variables to load the engine.
+	var err error
+	c.Engine, err = gogo.NewEngine(*proto, *backend)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *Client) ParseFlags() {
@@ -58,13 +56,8 @@ func (c *Client) ParseFlags() {
 	bMsg := fmt.Sprintf("Storage backend to use ('%s')", bFlags)
 
 	//Create and parse the flags
-	proto := flag.String("p", pdFlag, pMsg)
-	backend := flag.String("s", bdFlag, bMsg)
-	verbose := flag.Bool("v", false, "Verbose mode")
+	proto = flag.String("p", pdFlag, pMsg)
+	backend = flag.String("s", bdFlag, bMsg)
+	verbose = flag.Bool("v", false, "Verbose mode")
 	flag.Parse()
-
-	//Load the flags into this struct.
-	c.parseProtocol(*proto)
-	c.parseBackend(*backend)
-	c.parseVerbose(*verbose)
 }
