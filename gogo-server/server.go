@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"flag"
 	"strings"
-	"github.com/fmd/gogo/gogo"
 	"github.com/fmd/gogo/gogo/backends"
 	"github.com/fmd/gogo/gogo/protocols"
 )
 
 type Server struct {
-	Engine  *gogo.Engine
+	Engine  *Engine
 	Verbose bool
 }
 
@@ -54,7 +53,7 @@ func (s *Server) Init() error {
 
 	//Use our proto and backend variables to load the engine.
 	var err error
-	s.Engine, err = gogo.NewEngine(*proto, *backend)
+	s.Engine, err = NewEngine(*proto, *backend)
 	if err != nil {
 		return err
 	}
