@@ -10,13 +10,13 @@ import (
 )
 
 var (
-	proto *string
+	proto   *string
 	backend *string
 	verbose *bool
 )
 
 type Client struct {
-	Engine *gogo.Engine
+	Engine  *gogo.Engine
 	Verbose bool
 }
 
@@ -28,7 +28,7 @@ func (c *Client) parseVerbose(verbose bool) {
 }
 
 func (c *Client) Init() error {
-	
+
 	//Parse the flags to get the engine setup
 	c.ParseFlags()
 	c.parseVerbose(*verbose)
