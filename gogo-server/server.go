@@ -5,7 +5,6 @@ import (
 	"flag"
 	"strings"
 	"github.com/fmd/gogo/gogo"
-	"github.com/codegangsta/martini"
 	"github.com/fmd/gogo/gogo/backends"
 	"github.com/fmd/gogo/gogo/protocols"
 )
@@ -56,9 +55,5 @@ func (s *Server) Init() error {
 }
 
 func (s *Server) ServeForever() {
-  m := martini.Classic()
-  m.Get("/", func() string {
-    return "Hello world!"
-  })
-  m.Run()
+	s.Engine.Run()
 }
