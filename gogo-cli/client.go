@@ -4,10 +4,12 @@ import (
     "fmt"
     "flag"
     "strings"
-    "github.com/fmd/gogo/gogo-cli/protocols"
+    "github.com/fmd/gogo/gogo/backends"
+    "github.com/fmd/gogo/gogo/protocols"
 )
 
 type Client struct {
+    Backend backends.Backend
     Protocol protocols.IOProtocol
     Verbose bool
 }
@@ -19,7 +21,17 @@ func (c *Client) parseProtocol(name string) {
     }
 
     c.Protocol = p
-    fmt.Println(fmt.Sprintf("Using protocol: '%s'.",c.Protocol.Flag()))
+    fmt.Println(fmt.Sprintf("Using protocol '%s'.",c.Protocol.Flag()))
+}
+
+func (c *Client) parseBackend(name string) {
+    b, err := backends.GetBackend(name)
+    if err != nil {
+        panic(err)
+    }
+
+    c.Backend = b
+    fmt.Println(fmt.Sprintf("Using storage format '%s'.",c.Backend.Flag()))
 }
 
 func (c *Client) parseVerbose(verbose bool) {
@@ -35,18 +47,24 @@ func (c *Client) Init() {
 
 func (c *Client) ParseFlags() {
     
-    //Protocol flag
-    firstFlag := protocols.GetProtocolFlags()[0]
-    pFlags := strings.Join(protocols.GetProtocolFlags(), ", ")
-    pMsg := fmt.Sprintf("I/O Protocol to use (%s)",pFlags)
-    var proto = flag.String("p", firstFlag, pMsg)
+    //Get protocols for use in the help text and default protocol
+    pdFlag := protocols.GetProtocolFlags()[0]
+    pFlags := strings.Join(protocols.GetProtocolFlags(), "', '")
+    pMsg := fmt.Sprintf("I/O Protocol to use ('%s')",pFlags)
     
-    //Verbose flag
-    var verbose = flag.Bool("v", false, "Verbose mode")
+    //Get backends for use in the help text and default backend
+    bdFlag := backends.GetBackendFlags()[0]
+    bFlags := strings.Join(backends.GetBackendFlags(), "', '")
+    bMsg := fmt.Sprintf("Storage backend to use ('%s')",bFlags)
 
-    //Parse the flags
+    //Create and parse the flags
+    proto := flag.String("p", pdFlag, pMsg)
+    backend := flag.String("s", bdFlag, bMsg)
+    verbose := flag.Bool("v", false, "Verbose mode")
     flag.Parse()
 
+    //Load the flags into this struct.
     c.parseProtocol(*proto)
+    c.parseBackend(*backend)
     c.parseVerbose(*verbose)
 }

@@ -6,6 +6,6 @@ import (
 
 func main() {
     c := Client{}
-    c.ParseFlags()
+    c.Init()
     fmt.Println("OK")
 }
