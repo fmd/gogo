@@ -1,14 +1,14 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 func main() {
-    s := Server{}
-    err := s.Init()
-    if err != nil {
-        panic(err)
-    }
-    s.ServeForever()
+	s := Server{}
+	err := s.Init()
+	if err != nil {
+		panic(err)
+	}
+	s.ServeForever()
 }

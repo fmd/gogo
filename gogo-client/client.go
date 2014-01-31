@@ -11,7 +11,7 @@ var (
 	proto *string
 )
 
-type Client struct {}
+type Client struct{}
 
 func (c *Client) Init() {
 	//Parse the flags
