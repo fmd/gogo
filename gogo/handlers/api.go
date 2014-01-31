@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"fmt"
-	"net/http"
+	//"fmt"
+	//"net/http"
 	"github.com/fmd/gogo/gogo/backends"
 	"github.com/fmd/gogo/gogo/protocols"
 	"github.com/codegangsta/martini"
@@ -16,15 +16,15 @@ type ApiHandler struct {
 }
 
 func (a *ApiHandler) loadRoutes() {
-	a.Martini.Get("/api", func(r render.Render) string {
+	a.Martini.Get("/api", func(r render.Render) {
 		r.JSON(200,"Hello, world!")
 	})
 
-	a.Martini.Get("/api/about", func(r render.Render) string {
+	a.Martini.Get("/api/about", func(r render.Render) {
 		r.JSON(200,"About the world!")
 	})
 
-	a.Martini.Get("/api/contact", func(r render.Render) string {
+	a.Martini.Get("/api/contact", func(r render.Render) {
 		r.JSON(200,"Cool the world!")
 	})
 }
@@ -35,7 +35,7 @@ func NewApiHandler(m *martini.ClassicMartini, p protocols.IOProtocol, b backends
 	a.Protocol = p
 	a.Martini = m
 
-	a.Martini.Use(render.Render)
+	a.Martini.Use(render.Renderer())
 	a.loadRoutes()
 	return a
 }
