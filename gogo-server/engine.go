@@ -69,7 +69,7 @@ func NewEngine(p string, b string) (*Engine, error) {
 
 	//Create the SiteHandler
 	e.SiteHandler = handlers.NewSiteHandler(e.Martini)
-	e.ApiHandler = handlers.NewApiHandler(e.Martini, e.Backend)
+	e.ApiHandler = handlers.NewApiHandler(e.Martini, e.Protocol, e.Backend)
 
 	//Return the object
 	return e, nil
