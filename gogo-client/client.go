@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"flag"
-	"strings"
+	"fmt"
 	curl "github.com/andelf/go-curl"
 	"github.com/fmd/gogo/gogo/protocols"
+	"strings"
 )
 
 var (
@@ -32,21 +32,21 @@ func (c *Client) Init() {
 }
 
 func (c *Client) Run() {
-    easy := curl.EasyInit()
-    defer easy.Cleanup()
+	easy := curl.EasyInit()
+	defer easy.Cleanup()
 
-    easy.Setopt(curl.OPT_URL, "localhost:3000")
+	easy.Setopt(curl.OPT_URL, "localhost:3000")
 
-    // make a callback function
-    fooTest := func (buf []byte, userdata interface{}) bool {
-        println("DEBUG: size=>", len(buf))
-        println("DEBUG: content=>", string(buf))
-        return true
-    }
+	// make a callback function
+	fooTest := func(buf []byte, userdata interface{}) bool {
+		println("DEBUG: size=>", len(buf))
+		println("DEBUG: content=>", string(buf))
+		return true
+	}
 
-    easy.Setopt(curl.OPT_WRITEFUNCTION, fooTest)
+	easy.Setopt(curl.OPT_WRITEFUNCTION, fooTest)
 
-    if err := easy.Perform(); err != nil {
-        fmt.Printf("ERROR: %v\n", err)
-    }
+	if err := easy.Perform(); err != nil {
+		fmt.Printf("ERROR: %v\n", err)
+	}
 }

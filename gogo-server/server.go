@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"flag"
-	"strings"
+	"fmt"
 	"github.com/fmd/gogo/gogo/backends"
 	"github.com/fmd/gogo/gogo/protocols"
+	"strings"
 )
 
 type Server struct {
@@ -13,9 +13,9 @@ type Server struct {
 	Verbose bool
 }
 
-// -------------------------- 
-// --- Internal functions --- 
-// -------------------------- 
+// --------------------------
+// --- Internal functions ---
+// --------------------------
 
 func (s *Server) parseProtocolFlag() *string {
 	//Get protocols for use in the help text and default protocol
@@ -39,9 +39,9 @@ func (s *Server) parseVerboseFlag() *bool {
 	return flag.Bool("v", false, "Verbose mode")
 }
 
-// ---------------------------- 
-// --- Accessible functions --- 
-// ---------------------------- 
+// ----------------------------
+// --- Accessible functions ---
+// ----------------------------
 
 func (s *Server) Init() error {
 

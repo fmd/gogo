@@ -3,17 +3,17 @@ package main
 import (
 	"fmt"
 	"github.com/codegangsta/martini"
-	"github.com/fmd/gogo/gogo/handlers"
 	"github.com/fmd/gogo/gogo/backends"
+	"github.com/fmd/gogo/gogo/handlers"
 	"github.com/fmd/gogo/gogo/protocols"
 )
 
 type Engine struct {
-	Backend  backends.Backend
-	Protocol protocols.IOProtocol
-	ApiHandler *handlers.ApiHandler
+	Backend     backends.Backend
+	Protocol    protocols.IOProtocol
+	ApiHandler  *handlers.ApiHandler
 	SiteHandler *handlers.SiteHandler
-	Martini *martini.ClassicMartini
+	Martini     *martini.ClassicMartini
 }
 
 // --------------------------
