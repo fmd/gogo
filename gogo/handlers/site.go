@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/codegangsta/martini"
+	"github.com/codegangsta/martini-contrib/render"
 )
 
 type SiteHandler struct {
@@ -9,16 +10,16 @@ type SiteHandler struct {
 }
 
 func (s *SiteHandler) loadRoutes() {
-	s.Martini.Get("/", func() string {
-		return "Hello, world."
+	s.Martini.Get("/", func(r render.Render)  {
+		r.HTML(200, "home", "world")
 	})
 
-	s.Martini.Get("/about", func() string {
-		return "About the world."
+	s.Martini.Get("/about", func(r render.Render)  {
+		r.HTML(200, "about", "world")
 	})
 
-	s.Martini.Get("/contact", func() string {
-		return "Contact the world."
+	s.Martini.Get("/contact", func(r render.Render)  {
+		r.HTML(200, "contact", "world")
 	})
 }
 

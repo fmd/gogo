@@ -6,6 +6,7 @@ import (
 	"github.com/fmd/gogo/gogo/backends"
 	"github.com/fmd/gogo/gogo/handlers"
 	"github.com/fmd/gogo/gogo/protocols"
+	"github.com/codegangsta/martini-contrib/render"
 )
 
 type Engine struct {
@@ -54,6 +55,7 @@ func NewEngine(p string, b string) (*Engine, error) {
 	//Create the object
 	e := &Engine{}
 	e.Martini = martini.Classic()
+	e.Martini.Use(render.Renderer())
 
 	//Set the protocol
 	err = e.useProtocol(p)
