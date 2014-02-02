@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/codegangsta/martini"
-	"github.com/fmd/gogo/gogo/backends"
-	"github.com/fmd/gogo/gogo/handlers"
 	"github.com/fmd/gogo/gogo/protocols"
+	"github.com/fmd/gogo/gogo-server/backends"
+	"github.com/fmd/gogo/gogo-server/handlers"
 	"github.com/codegangsta/martini-contrib/render"
 )
 

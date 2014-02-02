@@ -1,8 +1,9 @@
 package backends
 
 import (
-	"errors"
 	"fmt"
+	"errors"
+	"github.com/fmd/gogo/gogo-server/models"
 )
 
 var (
@@ -12,6 +13,12 @@ var (
 
 type Backend interface {
 	Flag() string
+	
+	CreateUser()
+	UpdateUser()
+
+	CreateBoard()
+	UpdateBoard()
 }
 
 func GetBackendFlags() []string {

@@ -1,0 +1,14 @@
+{
+  "development": {
+    "driver": "postgres",
+    "source": "user='fareed' dbname='gogo' sslmode='disable' password='Killjoy12345'"
+  },
+  "production": {
+    "driver": "",
+    "source": ""
+  },
+  "test": {
+    "driver": "",
+    "source": ""
+  }
+}

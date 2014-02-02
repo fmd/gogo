@@ -1,11 +1,11 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"github.com/fmd/gogo/gogo/backends"
-	"github.com/fmd/gogo/gogo/protocols"
+	"flag"
 	"strings"
+	"github.com/fmd/gogo/gogo/protocols"
+	"github.com/fmd/gogo/gogo-server/backends"
 )
 
 type Server struct {
