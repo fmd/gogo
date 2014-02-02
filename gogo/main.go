@@ -13,22 +13,20 @@ var b *Backend
 var s sessions.CookieStore
 var m *martini.ClassicMartini
 
-func GetHomepage(req *http.Request, r render.Render) {
-    r.HTML(200,"index",nil)
-}
-
 func GetUser(req *http.Request, p martini.Params, r render.Render) {
     id, err := strconv.Atoi(p["id"])
 
     if err != nil {
         r.JSON(500,"Internal server error")
+        return
     }
 
     var users []User
     b.Hd.Where("id", "=", id).Limit(1).Find(&users)
 
     if len(users) != 1 {
-        r.JSON(500,"Internal server error")   
+        r.JSON(500,"Internal server error")  
+        return 
     }
     
     r.JSON(200,users[0])
@@ -40,11 +38,12 @@ func UpdateUser(req *http.Request, r render.Render) {
 
 func CreateUser(req *http.Request, r render.Render) {
     u := &User{}
-    u.Email = "fareeddudhia@gmail.com"
-    u.Username = "fmd"
+    u.Email = req.FormValue("email")
+    u.Username = req.FormValue("username")
     err := b.Save(u)
     if err != nil {
         r.JSON(500,"Internal server error")
+        return
     }
     r.JSON(200,u)
 }
@@ -62,7 +61,6 @@ func main() {
     m.Use(sessions.Sessions("gogo_session", s))
     m.Use(render.Renderer())
 
-    m.Get(`/`, GetHomepage)
     m.Post(`/api/user/create`, CreateUser)
     m.Get(`/api/user/:id`, GetUser)
     m.Post(`/api/user/:id/update`, UpdateUser)
