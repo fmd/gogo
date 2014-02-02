@@ -8,6 +8,7 @@ type User struct {
     Id hood.Id `sql:"id" json:"id"`
     Email string `sql:"email" json:"email"`
     Username string `sql:"username" json:"username"`
+    Password string `sql:"password"`
     //authenticated bool `json:"-"`
 
     Created hood.Created
