@@ -8,6 +8,7 @@ type User struct {
     Id hood.Id
     Email string
     Username string
+    Password string
 
     Created hood.Created
     Updated hood.Updated
@@ -19,4 +20,4 @@ func (m *M) CreateUserTable_1391299892_Up(hd *hood.Hood) {
 
 func (m *M) CreateUserTable_1391299892_Down(hd *hood.Hood) {
     hd.DropTable(&User{})
-}   
+}
