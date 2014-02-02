@@ -1,7 +1,6 @@
 package models
 
 import (
-    "fmt"
     "github.com/eaigner/hood"
 )
 
@@ -13,10 +12,6 @@ type User struct {
 
     Created hood.Created
     Updated hood.Updated
-}
-
-func (table *Person) Indexes(indexes *hood.Indexes) {
-  indexes.AddUnique("email_index", "email")
 }
 
 func (u *User) IsAuthenticated() bool {
@@ -35,7 +30,7 @@ func (u *User) UniqueId() interface{} {
     return u.Id
 }
 
-func (u *User) GetById(hd *hood.Hood, id interface{}) error {
+func (u *User) GetById(id interface{}) error {
     u.Id = id.(hood.Id)
     return nil
 }

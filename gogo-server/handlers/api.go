@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"github.com/fmd/gogo/gogo/protocols"
 	"github.com/fmd/gogo/gogo-server/models"
-	"github.com/fmd/gogo/gogo-server/handlers"
-	"github.com/fmd/gogo/gogo-server/backends"
 	"github.com/codegangsta/martini"
 	"github.com/codegangsta/martini-contrib/render"
 	"github.com/codegangsta/martini-contrib/sessions"
@@ -14,9 +12,7 @@ import (
 )
 
 type ApiHandler struct {
-	Martini *martini.ClassicMartini
-	Protocol protocols.IOProtocol
-	Backend backends.Backend
+	Engine *Engine
 	Store sessions.CookieStore
 }
 
@@ -28,6 +24,14 @@ func (a *ApiHandler) needsAuth(r render.Render, u sessionauth.User, req *http.Re
 }
 
 func (a *ApiHandler) loadRoutes() {
+	a.Martini.Get("/api/user/create", func (s sessions.Session, r render.Render) {
+		u := &models.User{}
+		u.Email = "fareed@3ev.com"
+		u.Username = "fmd"
+
+		a.Backend.Save(u)
+	})
+
 	a.Martini.Get("/api/login", func(s sessions.Session, u sessionauth.User, r render.Render) {
 		err := sessionauth.AuthenticateSession(s, u)
 		if err != nil {
@@ -52,8 +56,9 @@ func (a *ApiHandler) loadRoutes() {
 	})
 }
 
-func NewApiHandler(m *martini.ClassicMartini, p protocols.IOProtocol, b backends.Backend) *ApiHandler {
+func NewApiHandler(m *martini.ClassicMartini, p protocols.IOProtocol, b *Backend) *ApiHandler {
 	a := &ApiHandler{}
+
 	a.Backend = b
 	a.Protocol = p
 	a.Martini = m
@@ -61,7 +66,7 @@ func NewApiHandler(m *martini.ClassicMartini, p protocols.IOProtocol, b backends
 
 	a.Martini.Use(sessions.Sessions("gogo_session", a.Store))
 	a.Martini.Use(sessionauth.SessionUser(func () sessionauth.User {
-		return &models.MyUser{}
+		return &models.User{}
 	}))
 
 	a.loadRoutes()

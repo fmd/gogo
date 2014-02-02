@@ -5,7 +5,6 @@ import (
 	"flag"
 	"strings"
 	"github.com/fmd/gogo/gogo/protocols"
-	"github.com/fmd/gogo/gogo-server/backends"
 )
 
 type Server struct {
@@ -26,15 +25,6 @@ func (s *Server) parseProtocolFlag() *string {
 	return flag.String("p", pdFlag, pMsg)
 }
 
-func (s *Server) parseBackendFlag() *string {
-	//Get backends for use in the help text and default backend
-	bdFlag := backends.GetBackendFlags()[0]
-	bFlags := strings.Join(backends.GetBackendFlags(), "', '")
-	bMsg := fmt.Sprintf("Storage backend to use ('%s')", bFlags)
-
-	return flag.String("s", bdFlag, bMsg)
-}
-
 func (s *Server) parseVerboseFlag() *bool {
 	return flag.Bool("v", false, "Verbose mode")
 }
@@ -47,13 +37,12 @@ func (s *Server) Init() error {
 
 	//Parse the flags
 	proto := s.parseProtocolFlag()
-	backend := s.parseBackendFlag()
 	s.Verbose = *s.parseVerboseFlag()
 	flag.Parse()
 
 	//Use our proto and backend variables to load the engine.
 	var err error
-	s.Engine, err = NewEngine(*proto, *backend)
+	s.Engine, err = NewEngine(*proto)
 	if err != nil {
 		return err
 	}

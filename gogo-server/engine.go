@@ -2,15 +2,15 @@ package main
 
 import (
 	"fmt"
+	"github.com/eaigner/hood"
 	"github.com/codegangsta/martini"
 	"github.com/fmd/gogo/gogo/protocols"
-	"github.com/fmd/gogo/gogo-server/backends"
 	"github.com/fmd/gogo/gogo-server/handlers"
 	"github.com/codegangsta/martini-contrib/render"
 )
 
 type Engine struct {
-	Backend     backends.Backend
+	Backend     *Backend
 	Protocol    protocols.IOProtocol
 	ApiHandler  *handlers.ApiHandler
 	SiteHandler *handlers.SiteHandler
@@ -33,23 +33,12 @@ func (e *Engine) useProtocol(name string) error {
 	return nil
 }
 
-func (e *Engine) useBackend(name string) error {
-	b, err := backends.GetBackend(name)
-	if err != nil {
-		return err
-	}
-
-	e.Backend = b
-	fmt.Println(fmt.Sprintf("Using storage format '%s'.", e.Backend.Flag()))
-	return nil
-}
-
 // ----------------------------
 // --- Accessible functions ---
 // ----------------------------
 
 // --- Initialisation functions ---
-func NewEngine(p string, b string) (*Engine, error) {
+func NewEngine(protocol string) (*Engine, error) {
 	var err error = nil
 
 	//Create the object
@@ -58,20 +47,14 @@ func NewEngine(p string, b string) (*Engine, error) {
 	e.Martini.Use(render.Renderer())
 
 	//Set the protocol
-	err = e.useProtocol(p)
+	err = e.useProtocol(protocol)
 	if err != nil {
 		return nil, err
 	}
 
-	//Set the backend
-	err = e.useBackend(b)
-	if err != nil {
-		return nil, err
-	}
-
-	//Create the SiteHandler
-	e.SiteHandler = handlers.NewSiteHandler(e.Martini)
-	e.ApiHandler = handlers.NewApiHandler(e.Martini, e.Protocol, e.Backend)
+	e.Backend = NewBackend()
+	e.SiteHandler = handlers.NewSiteHandler(e)
+	e.ApiHandler = handlers.NewApiHandler(e)
 
 	//Return the object
 	return e, nil
