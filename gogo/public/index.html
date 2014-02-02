@@ -1,0 +1,25 @@
+<html ng-app="gogo">
+    <head>
+        <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-resource.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular-route.min.js"></script>
+        <script src="js/controllers.js"></script>
+    </head>
+
+    <body ng-controller="UserCtrl">
+        <div class="user">
+            {{user.email}}
+            {{user.username}}
+        </div>
+        <form method="post" action="/api/user/create">
+            <fieldset>
+                <label for="email">Email</label>
+                <input type="text" name="email" />
+                <label for="email">Username</label>
+                <input type="text" name="username" />
+            </fieldset>
+            <input type="submit" />
+        </form>
+    </body>
+</html>
